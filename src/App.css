@@ -8,6 +8,32 @@
 
 .drawer-title {
   font-weight: bolder !important;
-  color: #8e8c8b;
+  color: #5e5c5b;
   font-size: 20px;
+}
+
+* {
+  font-family: "Inter" !important;
+}
+
+.ant-list-item-meta-title,
+.ant-list-item-meta-description {
+  font-size: 18px !important;
+}
+
+.ant-tag.ant-tag-has-color {
+  padding: 5px 8px;
+  font-size: 16px !important;
+}
+
+.ant-list-item-meta-description {
+  color: #5e5c5b !important;
+}
+
+body {
+  background-color: #edf3f7;
+}
+
+.ant-divider {
+  border-block-start: 0.7px solid rgba(5, 5, 5, 0.06) !important;
 }

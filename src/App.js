@@ -11,6 +11,10 @@ function App() {
   const setProject = (project) => {
     setSelectedProject(project);
   };
+  const [selectedScan, setSelectedScan] = useState(undefined);
+  const setScan = (scan) => {
+    setSelectedScan(scan);
+  };
   return (
     <BrowserRouter>
       <NavbarComponent />
@@ -23,11 +27,21 @@ function App() {
         />
         <Route
           path="/report"
-          element={<ResultsPageComponent selectedProject={selectedProject} />}
+          element={
+            <ResultsPageComponent
+              selectedProject={selectedProject}
+              selectedScan={selectedScan}
+            />
+          }
         />
         <Route
           path="/history"
-          element={<HistoryPageComponent selectedProject={selectedProject} />}
+          element={
+            <HistoryPageComponent
+              selectedProject={selectedProject}
+              setScan={(scan) => setScan(scan)}
+            />
+          }
         />
       </Routes>
     </BrowserRouter>

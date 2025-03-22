@@ -12,6 +12,7 @@ import {
   Button,
   Select,
   Space,
+  Spin,
 } from "antd";
 import { motion } from "framer-motion";
 import {
@@ -29,21 +30,26 @@ import {
   ToolOutlined,
   ReloadOutlined,
   HistoryOutlined,
-  HeatMapOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text, Paragraph } = Typography;
 
-export default function ResultsPageComponent({ selectedProject }) {
+export default function ResultsPageComponent({
+  selectedProject,
+  selectedScan,
+}) {
   const [stage, setStage] = useState(1);
   const [percent, setPercent] = useState(0);
   const [running, setRunning] = useState(true);
-  const [showTitle, setShowTitle] = useState(true);
-  const [showCharts, setShowCharts] = useState(true);
-  const [showFixes, setShowFixes] = useState(true);
+  const [showTitle, setShowTitle] = useState(false);
+  const [showCharts, setShowCharts] = useState(false);
+  const [showFixes, setShowFixes] = useState(false);
   const [open, setOpen] = useState(false);
   const [drawerData, setDrawerData] = useState(undefined);
   const [showProgressBars, setShowProgressBars] = useState(true);
+  const [responseData, setResponseData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const showDrawer = (item) => {
     setOpen(true);
@@ -80,6 +86,53 @@ export default function ResultsPageComponent({ selectedProject }) {
   //   }
   // }, [percent, stage, running]);
 
+  useEffect(() => {
+    const projectId = selectedProject?.projectId;
+    const scanId = selectedScan?.scan_id;
+
+    console.log("gggggg", selectedProject);
+    console.log("tttttttt", scanId);
+
+    const apiUrl = scanId
+      ? `http://54.174.73.151:8000/v1/latestScanByScanId/?scan_id=${scanId}`
+      : `http://54.174.73.151:8000/v1/latestScan/?project_id=${projectId}`;
+
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((result) => {
+        setResponseData(result);
+        setLoading(false);
+        setShowTitle(true);
+        setShowCharts(true);
+        setShowFixes(true);
+        console.log(result);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+        setShowTitle(true);
+        setShowCharts(true);
+        setShowFixes(true);
+      });
+  }, []);
+
+  if (loading)
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+          color: "#5E5C5B",
+        }}
+      >
+        <h2>Fetching the scan report...</h2>
+        <Spin size="large" tip="Loading..." />
+      </div>
+    );
+
   const getProgressStatus = (currentStage) => {
     return stage > currentStage || (stage === currentStage && percent === 100)
       ? "success"
@@ -88,10 +141,10 @@ export default function ResultsPageComponent({ selectedProject }) {
 
   const cvResponse = {
     projectName: "test-backend",
-    scanId: "10189",
+    scan_id: "10189",
     cvs: [
       {
-        id: "1",
+        cve_id: "1",
         category: "SQL Injection",
         vulnerability: "User input is not sanitized in login form.",
         description: "User input is not sanitized in login form.",
@@ -104,7 +157,7 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
-        id: "2",
+        cve_id: "2",
         category: "SQL Injection",
         vulnerability: "Dynamic SQL queries are being used.",
         description: "Dynamic SQL queries are being used.",
@@ -117,7 +170,7 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
-        id: "3",
+        cve_id: "3",
         category: "SQL Injection",
         vulnerability: "Database error messages expose system details.",
         description: "Database error messages expose system details.",
@@ -130,6 +183,7 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
+        cve_id: "4",
         category: "SQL Injection",
         vulnerability: "User-provided input is concatenated into SQL queries.",
         description: "User-provided input is concatenated into SQL queries.",
@@ -142,11 +196,12 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
+        cve_id: "5",
         category: "XSS",
         vulnerability: "User comments are rendered without escaping HTML.",
         description: "User comments are rendered without escaping HTML.",
-        severity: "Moderate",
-        color: "#EC5800", // Moderate severity color
+        severity: "Medium",
+        color: "#EC5800", // Medium severity color
         solutions: [
           "Escape user input before rendering to prevent XSS.",
           "Use frameworks that auto-escape output (e.g., React).",
@@ -154,10 +209,11 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
+        cve_id: "6",
         category: "XSS",
         vulnerability: "Script tags are allowed in input fields.",
         description: "Script tags are allowed in input fields.",
-        severity: "Moderate",
+        severity: "Medium",
         color: "#EC5800",
         solutions: [
           "Validate and sanitize input to remove script tags.",
@@ -166,10 +222,11 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
+        cve_id: "7",
         category: "XSS",
         vulnerability: "User profile images accept JavaScript payloads.",
         description: "Script tags are allowed in input fields.",
-        severity: "Moderate",
+        severity: "Medium",
         color: "#EC5800",
         solutions: [
           "Validate and sanitize file uploads to prevent script execution.",
@@ -178,6 +235,7 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
+        cve_id: "8",
         category: "Insecure API",
         vulnerability:
           "API does not require authentication for sensitive endpoints.",
@@ -192,6 +250,7 @@ export default function ResultsPageComponent({ selectedProject }) {
         ],
       },
       {
+        cve_id: "9",
         category: "Insecure API",
         vulnerability: "API responses contain excessive sensitive data.",
         description: "API responses contain excessive sensitive data.",
@@ -207,10 +266,10 @@ export default function ResultsPageComponent({ selectedProject }) {
   };
 
   const severityColorMap = {
-    Low: "#ffc100",
-    Moderate: "#FF7F50",
-    High: "#E35335",
-    Critical: "#890800",
+    low: "#ffc100",
+    medium: "#FF7F50",
+    high: "#E35335",
+    critical: "#890800",
   };
 
   const projects = [
@@ -281,8 +340,8 @@ export default function ResultsPageComponent({ selectedProject }) {
       color: "#890800",
     },
     {
-      name: "Moderate",
-      value: cvResponse.cvs.filter((i) => i.severity === "Moderate").length,
+      name: "Medium",
+      value: cvResponse.cvs.filter((i) => i.severity === "Medium").length,
       color: "#EC5800",
     },
     {
@@ -304,7 +363,7 @@ export default function ResultsPageComponent({ selectedProject }) {
       name: "XSS",
       count: cvResponse.cvs.filter((i) => i.category === "XSS").length,
       color: "#EC5800",
-    }, // Moderate severity
+    }, // Medium severity
     {
       name: "Insecure API",
       count: cvResponse.cvs.filter((i) => i.category === "Insecure API").length,
@@ -322,7 +381,7 @@ export default function ResultsPageComponent({ selectedProject }) {
         minHeight: "100vh",
         fontSize: "28px",
         // fontWeight: "bold",
-        color: "#8e8c8b",
+        color: "#5E5C5B",
         // textShadow: "2px 2px 6px rgba(0, 0, 0, 0.3)", // Soft glow effect
       }}
     >
@@ -413,9 +472,9 @@ export default function ResultsPageComponent({ selectedProject }) {
           >
             <p>
               Project:
-              {selectedProject && selectedProject.projectName != null && (
+              {selectedProject && selectedProject.name != null && (
                 <Select
-                  defaultValue={selectedProject.projectName}
+                  defaultValue={selectedProject.name}
                   style={{
                     width: 200,
                     paddingLeft: "10px",
@@ -430,7 +489,8 @@ export default function ResultsPageComponent({ selectedProject }) {
             <Link
               to="/history"
               style={{
-                marginTop: "5px",
+                marginTop: "12px",
+                fontSize: "19px",
               }}
             >
               <HistoryOutlined /> <Space> View run history </Space>
@@ -449,7 +509,10 @@ export default function ResultsPageComponent({ selectedProject }) {
               fontWeight: "bold",
             }}
           >
-            Vulnerability scan report - #{cvResponse.scanId}
+            Vulnerability scan report - #
+            {responseData.detail !== "Not Found"
+              ? responseData.scan_id
+              : cvResponse.scan_id}
           </motion.div>
         </>
       )}
@@ -618,16 +681,20 @@ export default function ResultsPageComponent({ selectedProject }) {
           </Flex>
           <>
             <List
-              dataSource={cvResponse.cvs}
+              dataSource={
+                responseData.detail !== "Not Found"
+                  ? responseData.cves
+                  : cvResponse.cvs
+              }
               bordered
               renderItem={(item) => (
                 <List.Item
-                  key={item.id}
+                  key={item.cve_id}
                   onClick={() => showDrawer(item)} // Clicking anywhere opens the drawer
                   actions={[
                     <AntdTooltip
                       title="View Recommendations"
-                      key={`tooltip-${item.id}`}
+                      key={`tooltip-${item.cve_id}`}
                     >
                       <ToolOutlined
                         style={{ fontSize: "18px", cursor: "pointer" }}
@@ -646,10 +713,41 @@ export default function ResultsPageComponent({ selectedProject }) {
                 >
                   <List.Item.Meta
                     title={item.vulnerability}
-                    description={item.description}
+                    description={
+                      <>
+                        <p
+                          style={{
+                            backgroundColor: "#1890ff", // Same as Tag color
+                            color: "white",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            display: "inline-block",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {item.category}
+                        </p>
+                        <p
+                          style={{
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: 2,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "80%", // Ensures proper truncation
+                            marginTop: "-10px",
+                          }}
+                        >
+                          {item.description}
+                        </p>
+                      </>
+                    }
                   />
-                  <Tag color="#1890ff">{item.category}</Tag>
-                  <Tag color={severityColorMap[item.severity] || "#ccc"}>
+                  <Tag
+                    color={
+                      severityColorMap[item.severity.toLowerCase()] || "#ccc"
+                    }
+                  >
                     {item.severity}
                   </Tag>
                 </List.Item>
@@ -669,26 +767,35 @@ export default function ResultsPageComponent({ selectedProject }) {
                   style={{
                     marginBottom: 16,
                     textAlign: "center",
-                    color: "#8e8c8b",
+                    color: "#5E5C5B",
+                    fontSize: "25px",
                   }}
                 >
-                  <HeatMapOutlined style={{ marginRight: 52 }} />
                   {drawerData.vulnerability}
-                  <HeatMapOutlined style={{ marginLeft: 50 }} />
                 </Title>
 
-                <Divider />
-
                 <Paragraph>
-                  <Text strong>Description:</Text>
+                  <Text strong style={{ fontSize: "20px" }}>
+                    Description
+                  </Text>
                   <br />
-                  {drawerData.description}
+                  <Divider
+                    style={{ backgroundColor: "#5E5C5B", marginTop: "0px" }}
+                  />
+                  <span style={{ fontSize: "18px", marginTop: "-5px" }}>
+                    {drawerData.description}
+                  </span>
+                  <br />
                 </Paragraph>
 
-                <Divider />
-
-                <Title level={5}>Possible Solutions:</Title>
-                <ul style={{ paddingLeft: 20 }}>
+                <Text strong style={{ fontSize: "20px" }}>
+                  Remediations
+                </Text>
+                <br />
+                <Divider
+                  style={{ backgroundColor: "#5E5C5B", marginTop: "0px" }}
+                />
+                <ul style={{ paddingLeft: 10 }}>
                   {drawerData.solutions.map((solution, i) => (
                     <li
                       key={i}
@@ -699,17 +806,10 @@ export default function ResultsPageComponent({ selectedProject }) {
                         marginBottom: "10px",
                       }}
                     >
-                      <span
-                        style={{
-                          width: "12px",
-                          height: "12px",
-                          backgroundColor: "#1890ff",
-                          borderRadius: "50%",
-                          marginRight: "10px",
-                          flexShrink: 0,
-                        }}
-                      ></span>
-                      <Text style={{ color: "black" }}>{solution}</Text>
+                      <ToolOutlined style={{ marginRight: "10px" }} />
+                      <Text style={{ color: "black", fontSize: "18px" }}>
+                        {solution}
+                      </Text>
                     </li>
                   ))}
                 </ul>

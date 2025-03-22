@@ -20,26 +20,42 @@ const NavbarComponent = () => {
         alignItems: "center",
         background: "#fff",
         padding: "0 20px",
+        backgroundColor: "#1890ff",
         boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
       }}
     >
       {/* Logo */}
       <div
         className="logo"
-        style={{ fontSize: "20px", fontWeight: "bold", color: "#1890ff" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#fff",
+        }}
       >
+        <img
+          src={`${process.env.PUBLIC_URL}/security-audit.png`}
+          alt="Logo"
+          style={{ width: "40px", height: "40px" }}
+        />
         Argus
       </div>
 
       {/* Navigation Menu */}
       <Menu
-        theme="light"
+        // theme="light"
         mode="horizontal"
         selectedKeys={[location.pathname]}
-        style={{ flex: 1, justifyContent: "center" }}
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          backgroundColor: "#1890ff",
+        }}
       >
         {menuItems.map((item) => (
-          <Menu.Item key={item.key}>
+          <Menu.Item key={item.key} style={{ color: "#fff", fontSize:"18px" }}>
             <Link to={item.path}>{item.label}</Link>
           </Menu.Item>
         ))}
