@@ -50,6 +50,7 @@ export default function ResultsPageComponent({
   const [responseData, setResponseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [projectValues, setProjects] = useState(null);
 
   const showDrawer = (item) => {
     setOpen(true);
@@ -90,9 +91,18 @@ export default function ResultsPageComponent({
     const projectId = selectedProject?.projectId;
     const scanId = selectedScan?.scan_id;
 
-    console.log("gggggg", selectedProject);
-    console.log("tttttttt", scanId);
-
+    fetch("http://54.174.73.151:8000/v1/allProjects")
+      .then((response) => response.json())
+      .then((result) => {
+        setProjects(
+          result.map((i) => {
+            return {
+              value: i.name,
+              label: i.name,
+            };
+          })
+        );
+      });
     const apiUrl = scanId
       ? `http://54.174.73.151:8000/v1/latestScanByScanId/?scan_id=${scanId}`
       : `http://54.174.73.151:8000/v1/latestScan/?project_id=${projectId}`;
@@ -268,69 +278,9 @@ export default function ResultsPageComponent({
   const severityColorMap = {
     low: "#ffc100",
     medium: "#FF7F50",
-    high: "#E35335",
+    high: "#c71010",
     critical: "#890800",
   };
-
-  const projects = [
-    {
-      id: "a1",
-      projectName: "test-backend",
-      description: "Total scans: 4",
-      vulnerabilityCount: 11,
-      techStack: "java",
-      highSev: "10",
-      moderateSev: "2",
-      lowSev: "4",
-    },
-    {
-      id: "a2",
-      projectName: "test-frontend-app",
-      description: "Total scans: 2",
-      vulnerabilityCount: 25,
-      techStack: "reactJS",
-      highSev: "5",
-      moderateSev: "8",
-      lowSev: "6",
-    },
-    {
-      id: "a3",
-      projectName: "test-application",
-      description: "Total scans: 3",
-      vulnerabilityCount: 25,
-      techStack: "nodeJS",
-      highSev: "3",
-      moderateSev: "4",
-      lowSev: "6",
-    },
-    {
-      id: "a4",
-      projectName: "my-app",
-      description: "Total scans: 4",
-      vulnerabilityCount: 25,
-      techStack: "java",
-      highSev: "4",
-      moderateSev: "2",
-      lowSev: "8",
-    },
-    {
-      id: "a5",
-      projectName: "booking-app",
-      description: "Total scans: 1",
-      vulnerabilityCount: 25,
-      techStack: "reactJS",
-      highSev: "6",
-      moderateSev: "2",
-      lowSev: "10",
-    },
-  ];
-
-  const projectValues = projects.map((i) => {
-    return {
-      value: i.projectName,
-      label: i.projectName,
-    };
-  });
 
   // Pie Chart Data (Severity Levels)
   const severityData = [

@@ -9,8 +9,8 @@ const NavbarComponent = () => {
 
   const menuItems = [
     { key: "/", label: "Home", path: "/" },
-    { key: "/report", label: "Report", path: "/report" },
-    { key: "/history", label: "History", path: "/history" },
+    { key: "/report", label: "Report", path: "/report", disabled: true },
+    { key: "/history", label: "History", path: "/history", disabled: true },
   ];
 
   return (
@@ -55,7 +55,11 @@ const NavbarComponent = () => {
         }}
       >
         {menuItems.map((item) => (
-          <Menu.Item key={item.key} style={{ color: "#fff", fontSize:"18px" }}>
+          <Menu.Item
+            key={item.key}
+            style={{ color: "#fff", fontSize: "18px" }}
+            disabled={item.disabled || false}
+          >
             <Link to={item.path}>{item.label}</Link>
           </Menu.Item>
         ))}

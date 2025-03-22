@@ -22,7 +22,10 @@ function App() {
         <Route
           path="/"
           element={
-            <HomePageComponent setProject={(project) => setProject(project)} />
+            <HomePageComponent
+              setProject={(project) => setProject(project)}
+              setScan={(scan) => setScan(scan)}
+            />
           }
         />
         <Route

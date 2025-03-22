@@ -37,3 +37,8 @@ body {
 .ant-divider {
   border-block-start: 0.7px solid rgba(5, 5, 5, 0.06) !important;
 }
+
+.ant-menu-item-disabled,
+.ant-menu-title-content {
+  color: #fff !important;
+}

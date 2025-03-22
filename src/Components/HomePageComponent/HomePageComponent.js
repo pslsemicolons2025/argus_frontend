@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import "../../App.css";
 
-export default function HomePageComponent({ setProject }) {
+export default function HomePageComponent({ setProject, setScan }) {
   const [responseData, setResponseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCounts, setShowCounts] = useState(false);
@@ -38,7 +38,7 @@ export default function HomePageComponent({ setProject }) {
   const getSeverityColor = (severity) => {
     const colors = {
       Critical: "#890800", // Dark Red
-      High: "#E35335", // Red
+      High: "#c71010", // Red
       Medium: "#FF7F50", // Orange
       Low: "#ffc100", // Yellow
     };
@@ -60,6 +60,7 @@ export default function HomePageComponent({ setProject }) {
       const totalScans = getTotalScans(responseData);
       setTotalScansCount(totalScans);
     }
+    setScan(undefined);
   }, [responseData]);
 
   const getTotalSeverityCount = (projects) => {

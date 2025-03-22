@@ -7,6 +7,7 @@ import "../../App.css";
 export default function HistoryPageComponent({ selectedProject, setScan }) {
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [projectValues, setProjects] = useState(null);
 
   const processProjects = (projects) => {
     return projects.map((project) => {
@@ -36,7 +37,19 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
 
   useEffect(() => {
     const projectId = selectedProject?.projectId;
-    console.log("projectId", projectId);
+
+    fetch("http://54.174.73.151:8000/v1/allProjects")
+      .then((response) => response.json())
+      .then((result) => {
+        setProjects(
+          result.map((i) => {
+            return {
+              value: i.name,
+              label: i.name,
+            };
+          })
+        );
+      });
     fetch(
       `http://54.174.73.151:8000/v1/getScansByProjectId/?project_id=${projectId}`
     )
@@ -86,66 +99,6 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
       lowSev: "4",
     },
   ];
-
-  const projects = [
-    {
-      id: "a1",
-      projectName: "test-backend",
-      description: "Total scans: 4",
-      vulnerabilityCount: 11,
-      techStack: "java",
-      highSev: "10",
-      moderateSev: "2",
-      lowSev: "4",
-    },
-    {
-      id: "a2",
-      projectName: "test-frontend-app",
-      description: "Total scans: 2",
-      vulnerabilityCount: 25,
-      techStack: "reactJS",
-      highSev: "5",
-      moderateSev: "8",
-      lowSev: "6",
-    },
-    {
-      id: "a3",
-      projectName: "test-application",
-      description: "Total scans: 3",
-      vulnerabilityCount: 25,
-      techStack: "nodeJS",
-      highSev: "3",
-      moderateSev: "4",
-      lowSev: "6",
-    },
-    {
-      id: "a4",
-      projectName: "my-app",
-      description: "Total scans: 4",
-      vulnerabilityCount: 25,
-      techStack: "java",
-      highSev: "4",
-      moderateSev: "2",
-      lowSev: "8",
-    },
-    {
-      id: "a5",
-      projectName: "booking-app",
-      description: "Total scans: 1",
-      vulnerabilityCount: 25,
-      techStack: "reactJS",
-      highSev: "6",
-      moderateSev: "2",
-      lowSev: "10",
-    },
-  ];
-
-  const projectValues = projects.map((i) => {
-    return {
-      value: i.projectName,
-      label: i.projectName,
-    };
-  });
 
   function formatDate(dateString) {
     const date = new Date(dateString);
