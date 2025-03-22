@@ -368,7 +368,9 @@ export default function HomePageComponent({ setProject, setScan }) {
                   textDecoration: "none",
                   color: "inherit",
                 }}
-                onClick={() => setProject(item)}
+                onClick={() => {
+                  setProject(item);
+                }}
               >
                 <List.Item.Meta
                   title={item.name}

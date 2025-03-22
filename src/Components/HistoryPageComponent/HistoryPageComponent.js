@@ -11,6 +11,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
 
   const processProjects = (projects) => {
     return projects.map((project) => {
+      let criticalSev = 0;
       let highSev = 0;
       let moderateSev = 0;
       let lowSev = 0;
@@ -21,6 +22,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
           const severity = cve.severity.toUpperCase(); // Normalize case
 
           if (severity === "HIGH") highSev++;
+          else if (severity === "CRITICAL") criticalSev++;
           else if (severity === "MEDIUM") moderateSev++;
           else if (severity === "LOW") lowSev++;
         });
@@ -31,6 +33,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
         highSev,
         moderateSev,
         lowSev,
+        criticalSev,
       };
     });
   };
@@ -56,10 +59,8 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
       .then((response) => response.json())
       .then((result) => {
         const processedData = processProjects(result);
-        console.log("processedData", processedData);
         setScans(processedData);
         setLoading(false);
-        console.log("ttttt", result);
       })
       .catch((err) => {
         setLoading(false);
@@ -190,15 +191,15 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
                 }}
                 onClick={() => {
                   setScan(item);
-                  console.log(item);
                 }}
               >
                 <List.Item.Meta
                   title={`Scan Id: ${item.scan_id}`}
                   description={formatDate(item.timestamp)}
                 />
-                <Tag color="#890800">{item.highSev} High</Tag>
-                <Tag color="#EC5800">{item.moderateSev} Medium</Tag>
+                <Tag color="#890800">{item.criticalSev} Critical</Tag>
+                <Tag color="#E35335">{item.highSev} High</Tag>
+                <Tag color="#FF7F50">{item.moderateSev} Medium</Tag>
                 <Tag color="#ffc100">{item.lowSev} Low</Tag>
               </Link>
             </List.Item>

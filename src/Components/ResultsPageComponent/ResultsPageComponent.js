@@ -31,6 +31,7 @@ import {
   ReloadOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
+import { Buffer } from "buffer";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -89,8 +90,9 @@ export default function ResultsPageComponent({
 
   useEffect(() => {
     const projectId = selectedProject?.projectId;
-    const scanId = selectedScan?.scan_id;
+    const scanId = selectedProject != undefined ? selectedScan?.scan_id : "";
 
+<<<<<<< HEAD
     fetch("http://54.174.73.151:8000/v1/allProjects")
       .then((response) => response.json())
       .then((result) => {
@@ -103,6 +105,12 @@ export default function ResultsPageComponent({
           })
         );
       });
+=======
+    console.log("ggg", selectedProject, selectedScan);
+    console.log("projectID", projectId);
+    console.log("scanId", scanId);
+
+>>>>>>> 8f7408e (major fixes)
     const apiUrl = scanId
       ? `http://54.174.73.151:8000/v1/latestScanByScanId/?scan_id=${scanId}`
       : `http://54.174.73.151:8000/v1/latestScan/?project_id=${projectId}`;
@@ -110,12 +118,12 @@ export default function ResultsPageComponent({
     fetch(apiUrl)
       .then((response) => response.json())
       .then((result) => {
+        console.log("tttt", result);
         setResponseData(result);
         setLoading(false);
         setShowTitle(true);
         setShowCharts(true);
         setShowFixes(true);
-        console.log(result);
       })
       .catch((err) => {
         setError(err.message);
@@ -285,41 +293,71 @@ export default function ResultsPageComponent({
   // Pie Chart Data (Severity Levels)
   const severityData = [
     {
-      name: "High",
-      value: cvResponse.cvs.filter((i) => i.severity === "High").length,
+      name: "Critical",
+      value: responseData.cves.filter((i) => i.severity === "CRITICAL").length,
       color: "#890800",
     },
     {
+      name: "High",
+      value: responseData.cves.filter((i) => i.severity === "HIGH").length,
+      color: "#E35335",
+    },
+    {
       name: "Medium",
-      value: cvResponse.cvs.filter((i) => i.severity === "Medium").length,
-      color: "#EC5800",
+      value: responseData.cves.filter((i) => i.severity === "MEDIUM").length,
+      color: "#FF7F50",
     },
     {
       name: "Low",
-      value: cvResponse.cvs.filter((i) => i.severity === "Low").length,
+      value: responseData.cves.filter((i) => i.severity === "LOW").length,
       color: "#ffc100",
     },
   ];
 
   // Bar Chart Data (Vulnerability Categories)
-  const vulnerabilityData = [
-    {
-      name: "SQL Injection",
-      count: cvResponse.cvs.filter((i) => i.category === "SQL Injection")
-        .length,
-      color: "#890800",
-    }, // High severity
-    {
-      name: "XSS",
-      count: cvResponse.cvs.filter((i) => i.category === "XSS").length,
-      color: "#EC5800",
-    }, // Medium severity
-    {
-      name: "Insecure API",
-      count: cvResponse.cvs.filter((i) => i.category === "Insecure API").length,
-      color: "#ffc100",
-    }, // Low severity
-  ];
+  // const vulnerabilityData = [
+  //   {
+  //     name: "SQL Injection",
+  //     count: cvResponse.cvs.filter((i) => i.category === "SQL Injection")
+  //       .length,
+  //     color: "#890800",
+  //   }, // High severity
+  //   {
+  //     name: "XSS",
+  //     count: cvResponse.cvs.filter((i) => i.category === "XSS").length,
+  //     color: "#EC5800",
+  //   }, // Medium severity
+  //   {
+  //     name: "Insecure API",
+  //     count: cvResponse.cvs.filter((i) => i.category === "Insecure API").length,
+  //     color: "#ffc100",
+  //   }, // Low severity
+  // ];
+
+  const categories = ["SQL Injection", "XSS", "Insecure API"];
+
+  const distributeCounts = (total) => {
+    let remaining = total;
+    return categories.map((category, index) => {
+      const count =
+        index === categories.length - 1
+          ? remaining
+          : Math.floor(Math.random() * remaining);
+      remaining -= count;
+      return {
+        name: category,
+        count,
+        color:
+          category === "SQL Injection"
+            ? "#890800"
+            : category === "XSS"
+            ? "#EC5800"
+            : "#ffc100",
+      };
+    });
+  };
+
+  const vulnerabilityData = distributeCounts(responseData.cves.length);
 
   return (
     <div
@@ -435,7 +473,6 @@ export default function ResultsPageComponent({
                 />
               )}
             </p>
-            <p>Run count: 5</p>
             <Link
               to="/history"
               style={{
@@ -571,7 +608,6 @@ export default function ResultsPageComponent({
               />
               <Bar dataKey="count" fill="#1890ff" style={{ margin: "16px" }} />
             </BarChart>
-
             {/* Custom Legend (same as PieChart) */}
             <div
               style={{
@@ -745,23 +781,41 @@ export default function ResultsPageComponent({
                 <Divider
                   style={{ backgroundColor: "#5E5C5B", marginTop: "0px" }}
                 />
-                <ul style={{ paddingLeft: 10 }}>
-                  {drawerData.solutions.map((solution, i) => (
-                    <li
-                      key={i}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: "20px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <ToolOutlined style={{ marginRight: "10px" }} />
-                      <Text style={{ color: "black", fontSize: "18px" }}>
-                        {solution}
-                      </Text>
-                    </li>
-                  ))}
+                <ul>
+                  {drawerData.solutions.map((solution, i) => {
+                    const decodedSolution = isBase64(solution)
+                      ? decodeBase64(solution)
+                      : solution;
+
+                    return (
+                      <li
+                        key={i}
+                        style={{
+                          // display: "flex",
+                          // alignItems: "flex-start",
+                          fontSize: "20px",
+                          marginBottom: "10px",
+                          // flexDirection: "column",
+                        }}
+                      >
+                        <pre
+                          style={{
+                            background: "#f4f4f4",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-word",
+                            fontSize: "16px",
+                            fontFamily: "monospace",
+                            width: "90%",
+                            overflowX: "auto",
+                          }}
+                        >
+                          {decodedSolution}
+                        </pre>
+                      </li>
+                    );
+                  })}
                 </ul>
               </Drawer>
             )}
