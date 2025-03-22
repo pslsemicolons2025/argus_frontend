@@ -148,7 +148,7 @@ export default function HomePageComponent({ setProject, setScan }) {
     },
     {
       title: "Resolved vulnerabilities",
-      count: 15,
+      count: 2029,
       icon: "maintenance.png",
     },
   ];

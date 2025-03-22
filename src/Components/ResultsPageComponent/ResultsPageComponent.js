@@ -92,7 +92,6 @@ export default function ResultsPageComponent({
     const projectId = selectedProject?.projectId;
     const scanId = selectedProject != undefined ? selectedScan?.scan_id : "";
 
-<<<<<<< HEAD
     fetch("http://54.174.73.151:8000/v1/allProjects")
       .then((response) => response.json())
       .then((result) => {
@@ -105,12 +104,6 @@ export default function ResultsPageComponent({
           })
         );
       });
-=======
-    console.log("ggg", selectedProject, selectedScan);
-    console.log("projectID", projectId);
-    console.log("scanId", scanId);
-
->>>>>>> 8f7408e (major fixes)
     const apiUrl = scanId
       ? `http://54.174.73.151:8000/v1/latestScanByScanId/?scan_id=${scanId}`
       : `http://54.174.73.151:8000/v1/latestScan/?project_id=${projectId}`;
@@ -281,6 +274,18 @@ export default function ResultsPageComponent({
         ],
       },
     ],
+  };
+
+  const isBase64 = (str) => {
+    try {
+      return btoa(atob(str)) === str; // Encode and decode to verify
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const decodeBase64 = (str) => {
+    return Buffer.from(str, "base64").toString("utf-8");
   };
 
   const severityColorMap = {
