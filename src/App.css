@@ -1,0 +1,13 @@
+.list-item-hover:hover {
+  background-color: #f5f5f5 !important; /* Slightly lighter background */
+}
+
+.history-link {
+  margin-top: "15px" !important;
+}
+
+.drawer-title {
+  font-weight: bolder !important;
+  color: #8e8c8b;
+  font-size: 20px;
+}
