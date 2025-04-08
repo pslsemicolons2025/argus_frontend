@@ -41,7 +41,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
   useEffect(() => {
     const projectId = selectedProject?.projectId;
 
-    fetch("http://54.174.73.151:8000/v1/allProjects")
+    fetch("http://35.168.57.149:8000/v1/allProjects")
       .then((response) => response.json())
       .then((result) => {
         setProjects(
@@ -54,7 +54,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
         );
       });
     fetch(
-      `http://54.174.73.151:8000/v1/getScansByProjectId/?project_id=${projectId}`
+      `http://35.168.57.149:8000/v1/getScansByProjectId/?project_id=${projectId}`
     )
       .then((response) => response.json())
       .then((result) => {

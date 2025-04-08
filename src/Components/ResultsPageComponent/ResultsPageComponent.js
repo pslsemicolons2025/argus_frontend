@@ -92,7 +92,7 @@ export default function ResultsPageComponent({
     const projectId = selectedProject?.projectId;
     const scanId = selectedProject != undefined ? selectedScan?.scan_id : "";
 
-    fetch("http://54.174.73.151:8000/v1/allProjects")
+    fetch("http://35.168.57.149:8000/v1/allProjects")
       .then((response) => response.json())
       .then((result) => {
         setProjects(
@@ -105,8 +105,8 @@ export default function ResultsPageComponent({
         );
       });
     const apiUrl = scanId
-      ? `http://54.174.73.151:8000/v1/latestScanByScanId/?scan_id=${scanId}`
-      : `http://54.174.73.151:8000/v1/latestScan/?project_id=${projectId}`;
+      ? `http://35.168.57.149:8000/v1/latestScanByScanId/?scan_id=${scanId}`
+      : `http://35.168.57.149:8000/v1/latestScan/?project_id=${projectId}`;
 
     fetch(apiUrl)
       .then((response) => response.json())
