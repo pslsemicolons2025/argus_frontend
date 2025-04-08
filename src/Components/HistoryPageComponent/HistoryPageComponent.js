@@ -8,6 +8,8 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projectValues, setProjects] = useState(null);
+  const host = process.env.REACT_APP_API_HOST;
+  const port = process.env.REACT_APP_API_PORT;
 
   const processProjects = (projects) => {
     return projects.map((project) => {
@@ -41,7 +43,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
   useEffect(() => {
     const projectId = selectedProject?.projectId;
 
-    fetch("http://35.168.57.149:8000/v1/allProjects")
+    fetch(`http://${host}:${port}/v1/allProjects`)
       .then((response) => response.json())
       .then((result) => {
         setProjects(
@@ -53,9 +55,7 @@ export default function HistoryPageComponent({ selectedProject, setScan }) {
           })
         );
       });
-    fetch(
-      `http://35.168.57.149:8000/v1/getScansByProjectId/?project_id=${projectId}`
-    )
+    fetch(`http://${host}:${port}/v1/getScansByProjectId/?project_id=${projectId}`)
       .then((response) => response.json())
       .then((result) => {
         const processedData = processProjects(result);

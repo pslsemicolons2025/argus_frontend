@@ -10,6 +10,8 @@ export default function HomePageComponent({ setProject, setScan }) {
   const [showCounts, setShowCounts] = useState(false);
   const [totalCvCount, setTotalCvCount] = useState(0);
   const [totalScansCount, setTotalScansCount] = useState(0);
+  const host = process.env.REACT_APP_API_HOST;
+  const port = process.env.REACT_APP_API_PORT;
 
   const techStacks = ["Python", "Java", "C++", "C", ".NET"];
   const descriptions = [
@@ -161,7 +163,7 @@ export default function HomePageComponent({ setProject, setScan }) {
   };
 
   useEffect(() => {
-    fetch("http://35.168.57.149:8000/v1/allProjects")
+    fetch(`http://${host}:${port}/v1/allProjects`)
       .then((response) => response.json())
       .then((result) => {
         setResponseData(result);

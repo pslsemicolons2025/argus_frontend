@@ -52,6 +52,9 @@ export default function ResultsPageComponent({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [projectValues, setProjects] = useState(null);
+  const host = process.env.REACT_APP_API_HOST;
+  const port = process.env.REACT_APP_API_PORT;
+
 
   const showDrawer = (item) => {
     setOpen(true);
@@ -92,7 +95,7 @@ export default function ResultsPageComponent({
     const projectId = selectedProject?.projectId;
     const scanId = selectedProject != undefined ? selectedScan?.scan_id : "";
 
-    fetch("http://35.168.57.149:8000/v1/allProjects")
+    fetch(`http://${host}:${port}/v1/allProjects`)
       .then((response) => response.json())
       .then((result) => {
         setProjects(
@@ -105,8 +108,8 @@ export default function ResultsPageComponent({
         );
       });
     const apiUrl = scanId
-      ? `http://35.168.57.149:8000/v1/latestScanByScanId/?scan_id=${scanId}`
-      : `http://35.168.57.149:8000/v1/latestScan/?project_id=${projectId}`;
+      ? `http://${host}:${port}/v1/latestScanByScanId/?scan_id=${scanId}`
+      : `http://${host}:${port}/v1/latestScan/?project_id=${projectId}`;
 
     fetch(apiUrl)
       .then((response) => response.json())
